@@ -23,9 +23,7 @@ let findStartingPos v =
         else
             let pos = findFirstLessThan v cur
             match pos with
-            | Some pos -> 
-                let newMaxPos = max maxPos pos
-                findStartingPosRec (cur - 1) (if maxPos = newMaxPos then acc else (cur, pos))
+            | Some pos -> findStartingPosRec (cur - 1) (if maxPos < pos then (cur, pos) else acc)
             | None -> findStartingPosRec (cur - 1) acc
     findStartingPosRec (v.Length - 1)  (-1, -1)
 
