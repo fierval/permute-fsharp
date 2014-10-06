@@ -16,18 +16,18 @@ let swapPositions (v : 'a array) pos1 pos2 =
     res
         
 let findStartingPos v =
-    let rec findStartingPosRec cur maxPos maxIndex (acc : (int * int) list) =
+    let rec findStartingPosRec cur acc =
+        let maxPos = snd acc
         if cur < 0 || cur < maxPos then
-            if maxPos < 0 then None else Some(acc.[maxIndex])
+            if maxPos < 0 then None else Some acc
         else
             let pos = findFirstLessThan v cur
             match pos with
             | Some pos -> 
                 let newMaxPos = max maxPos pos
-                let newAcc = acc @ [(cur, pos)]
-                findStartingPosRec (cur - 1) newMaxPos (if maxPos = newMaxPos then maxIndex else (newAcc.Length - 1)) newAcc
-            | None -> findStartingPosRec (cur - 1) maxPos maxIndex acc
-    findStartingPosRec (v.Length - 1) -1 -1 []
+                findStartingPosRec (cur - 1) (if maxPos = newMaxPos then acc else (cur, pos))
+            | None -> findStartingPosRec (cur - 1) acc
+    findStartingPosRec (v.Length - 1)  (-1, -1)
 
 let sortRemainder (v : 'a array when 'a: comparison) pos =
     if v.Length - 1 = pos then v
