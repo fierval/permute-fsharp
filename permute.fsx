@@ -1,7 +1,6 @@
 ﻿let arr = [|1; 2; 3; 4|]
 
-let findFirst (v : 'a array when 'a: comparison) pos =
-    
+let findFirstLessThan (v : 'a array when 'a: comparison) pos =
     let rec findFirstSmallerPos cur =
         if cur < 0 then None
         elif v.[cur] < v.[pos] then Some cur
@@ -21,7 +20,7 @@ let findStartingPos v =
         if cur < 0 || cur < maxPos then
             if maxPos < 0 then None else Some(acc.[maxIndex])
         else
-            let pos = findFirst v cur
+            let pos = findFirstLessThan v cur
             match pos with
             | Some pos -> 
                 let newMaxPos = max maxPos pos
