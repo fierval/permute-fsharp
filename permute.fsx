@@ -39,11 +39,11 @@ let permute (v : 'a array when 'a: comparison) =
     Seq.unfold 
         (fun prev -> 
             match findStartingPos prev with
-            | None -> Some(prev, prev) // would be nice to abort somehow, but inifinite means infinite! 
+            | None -> None
             | Some (cur, pos) -> Some(prev, (sortRemainder (swapPositions prev cur pos) (pos + 1)))) v
     
  
-let sq = permute arr |> Seq.take 24
+let sq = permute arr 
 sq |> Seq.iter (fun e -> printfn "%A" e)
 
     
