@@ -30,17 +30,17 @@ let findStartingPos v =
 let sortRemainder (v : 'a array when 'a: comparison) pos =
     if v.Length - 1 = pos then v
     else
-        seq {
+        [|
             yield! v.[0..pos - 1]
             yield! Array.sort v.[pos..v.Length - 1];
-        } |> Seq.toArray
+        |]
 
 let permute (v : 'a array when 'a: comparison) =
     Seq.unfold 
         (fun prev -> 
             match findStartingPos prev with
             | None -> None
-            | Some (cur, pos) -> Some(prev, (sortRemainder (swapPositions prev cur pos) (pos + 1)))) v
+            | Some (cur, pos) -> Some(prev, sortRemainder (swapPositions prev cur pos) (pos + 1))) v
     
  
 let sq = permute arr 
