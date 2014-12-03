@@ -1,13 +1,16 @@
-﻿let mapValues f m = m |> Map.toSeq |> Seq.map (fun (k, v) -> (k, f v))
+﻿#r @"C:\Program Files (x86)\FSharpPowerPack-4.0.0.0\bin\FSharp.PowerPack.dll"
+open Microsoft.FSharp.Math
+
+let mapValues f m = m |> Map.toSeq |> Seq.map (fun (k, v) -> (k, f v))
 
 let uniform (v : int seq) =
     let v = v |> Seq.toList
-    v |> Seq.map (fun i -> i, (float 1) / (float v.Length)) |> Map.ofSeq
+    v |> Seq.map (fun i -> i, 1N / BigRational.FromInt v.Length) |> Map.ofSeq
 
 type IndEventBuilder () =
     member this.Zero () = Map.empty.Add(0, 0.)
-    member this.Return (e : 'a) : Map<'a, float> = Map.empty.Add(e, 1.)
-    member this.Bind (m : Map<'a, float>, fn : 'a -> Map<'a, float>) : Map<'a, float> =
+    member this.Return (e : 'a) : Map<'a, BigRational> = Map.empty.Add(e, 1N)
+    member this.Bind (m : Map<'a, BigRational>, fn : 'a -> Map<'a, BigRational>) : Map<'a, BigRational> =
         seq {
             for (key, value) in m |> Map.toSeq do 
                 yield! mapValues (fun x -> x * value) (fn key)
