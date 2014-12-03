@@ -38,7 +38,7 @@ let redDog =
         let secondCard = max card1 card2
 
         if card1 = card2 then
-            if card1 = card2 && card2 = card3 then return 10 else return 0
+            if card2 = card3 then return 10 else return 0
         elif firstCard + 1 = secondCard then return 0
         elif firstCard < card3 && card3 < secondCard then return 1 else return -1
     }
