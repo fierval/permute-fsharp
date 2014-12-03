@@ -1,15 +1,13 @@
-﻿type Distrib = Map<int, float>
+﻿let mapValues f m = m |> Map.toSeq |> Seq.map (fun (k, v) -> (k, f v))
 
-let mapValues f m = m |> Map.toSeq |> Seq.map (fun (k, v) -> (k, f v))
-
-let uniform (v : int seq) : Distrib =
+let uniform (v : int seq) =
     let v = v |> Seq.toList
     v |> Seq.map (fun i -> i, (float 1) / (float v.Length)) |> Map.ofSeq
 
 type IndEventBuilder () =
     member this.Zero () = Map.empty.Add(0, 0.)
-    member this.Return (e : int) : Distrib = Map.empty.Add(e, 1.)
-    member this.Bind (m : Distrib, fn : int -> Distrib) : Distrib =
+    member this.Return (e : 'a) : Map<'a, float> = Map.empty.Add(e, 1.)
+    member this.Bind (m : Map<'a, float>, fn : 'a -> Map<'a, float>) : Map<'a, float> =
         seq {
             for (key, value) in m |> Map.toSeq do 
                 yield! mapValues (fun x -> x * value) (fn key)
