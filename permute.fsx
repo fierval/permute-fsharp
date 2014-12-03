@@ -27,7 +27,7 @@ let findStartingPos v =
             | None -> findStartingPosRec (cur - 1) acc
     findStartingPosRec (v.Length - 1)  (-1, -1)
 
-let sortRemainder (v : 'a array when 'a: comparison) pos =
+let sortRemainder (v : 'a array) pos =
     if v.Length - 1 = pos then v
     else
         [|
@@ -45,5 +45,4 @@ let permute (v : 'a array when 'a: comparison) =
  
 let sq = permute arr 
 sq |> Seq.iter (fun e -> printfn "%A" e)
-
     
