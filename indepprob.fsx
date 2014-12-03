@@ -10,7 +10,7 @@ let uniform (v : int seq) =
 type IndEventBuilder () =
     member this.Zero () = Map.empty.Add(0, 0.)
     member this.Return (e : 'a) : Map<'a, BigRational> = Map.empty.Add(e, 1N)
-    member this.Bind (m : Map<'a, BigRational>, fn : 'a -> Map<'a, BigRational>) : Map<'a, BigRational> =
+    member this.Bind (m : Map<'a, BigRational>, fn : 'a -> Map<'b, BigRational>) : Map<'b, BigRational> =
         seq {
             for (key, value) in m |> Map.toSeq do 
                 yield! mapValues (fun x -> x * value) (fn key)
