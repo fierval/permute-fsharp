@@ -12,11 +12,14 @@ type IndEventBuilder () =
     member this.Zero () = Map.empty.Add(0, 0.)
     member this.Return (e : 'a) : Map<'a, BigRational> = Map.empty.Add(e, 1N)
     member this.Bind (m : Map<'a, BigRational>, fn : 'a -> Map<'b, BigRational>) : Map<'b, BigRational> =
-        seq {
-            for (key, value) in m |> Map.toSeq do 
-                yield! mapValues (fun x -> x * value) (fn key)
-            }
-            |>  Seq.groupBy(fun (key, value) -> key) |> Seq.map(fun (key, sq) -> (key, sq |> Seq.map (fun (key, value) -> value) |> Seq.sum)) |> Map.ofSeq
+            m 
+            |> Map.toSeq |> Seq.map (fun (key, value) -> mapValues (fun x -> x * value) (fn key))
+            |> Seq.concat
+            |> Seq.groupBy(fun (key, value) -> key) 
+            |> Seq.map(fun (key, sq) -> 
+                        (key, sq |> 
+                                Seq.map (fun (key, value) -> value) |> Seq.sum)) 
+            |> Map.ofSeq
             
 
 let independent = IndEventBuilder()
