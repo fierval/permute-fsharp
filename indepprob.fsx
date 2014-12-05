@@ -1,5 +1,6 @@
 ﻿#r @"C:\Program Files (x86)\FSharpPowerPack-4.0.0.0\bin\FSharp.PowerPack.dll"
 open Microsoft.FSharp.Math
+open System.Numerics
 
 let mapValues f m = m |> Map.toSeq |> Seq.map (fun (k, v) -> (k, f v))
 
@@ -27,8 +28,33 @@ let mp = independent {
     return x + y + z
 }
 
+let range = 52
+let cardProb = uniform [1..range / 4]
+
 let redDog = 
-    let cardProb = uniform [1..13]
+    let removeCard (v : BigRational) (i : int) = 
+        let mult = BigInteger range / v.Denominator
+        let i = BigInteger i
+        BigRational.FromBigInt (v.Numerator * mult - i) / BigRational.FromBigInt  (v.Denominator * mult - BigInteger 1)
+
+    let distWithRemoved card dist = dist |> Map.map (fun key v -> if key <> card then removeCard v 0 else removeCard v 1)
+
+    independent {
+        let! card1 = cardProb
+        let removedCard = distWithRemoved card1 cardProb
+        let! card2 = removedCard
+        let! card3 = distWithRemoved card2 removedCard 
+
+        let firstCard = min card1 card2
+        let secondCard = max card1 card2
+
+        if card1 = card2 then
+            if card2 = card3 then return 10 else return 0
+        elif firstCard + 1 = secondCard then return 0
+        elif firstCard < card3 && card3 < secondCard then return 1 else return -1
+    }
+
+let simpleRedDog = 
     independent {
         let! card1 = cardProb
         let! card2 = cardProb
@@ -42,3 +68,6 @@ let redDog =
         elif firstCard + 1 = secondCard then return 0
         elif firstCard < card3 && card3 < secondCard then return 1 else return -1
     }
+
+let expect dist = dist |> Map.toSeq |> Seq.sumBy (fun (k, v) -> float k * BigRational.ToDouble v)
+let verify (dist : Map<int, BigRational>) = dist |> Map.toSeq |> Seq.sumBy (fun (k, v) -> v) = 1N
