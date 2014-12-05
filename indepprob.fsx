@@ -45,13 +45,13 @@ let redDog =
         let! card2 = removedCard
         let! card3 = distWithRemoved card2 removedCard 
 
-        let firstCard = min card1 card2
-        let secondCard = max card1 card2
+        let minCard = min card1 card2
+        let maxCard = max card1 card2
 
         if card1 = card2 then
             if card2 = card3 then return 10 else return 0
-        elif firstCard + 1 = secondCard then return 0
-        elif firstCard < card3 && card3 < secondCard then return 1 else return -1
+        elif minCard + 1 = maxCard then return 0
+        elif minCard < card3 && card3 < maxCard then return 1 else return -1
     }
 
 let simpleRedDog = 
@@ -60,13 +60,13 @@ let simpleRedDog =
         let! card2 = cardProb
         let! card3 = cardProb
 
-        let firstCard = min card1 card2
-        let secondCard = max card1 card2
+        let minCard = min card1 card2
+        let maxCard = max card1 card2
 
         if card1 = card2 then
             if card2 = card3 then return 10 else return 0
-        elif firstCard + 1 = secondCard then return 0
-        elif firstCard < card3 && card3 < secondCard then return 1 else return -1
+        elif minCard + 1 = maxCard then return 0
+        elif minCard < card3 && card3 < maxCard then return 1 else return -1
     }
 
 let expect dist = dist |> Map.toSeq |> Seq.sumBy (fun (k, v) -> float k * BigRational.ToDouble v)
