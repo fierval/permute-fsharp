@@ -2,7 +2,9 @@
 open Microsoft.FSharp.Math
 open System.Numerics
 
-let mapValues f m = m |> Map.toSeq |> Seq.map (fun (k, v) -> (k, f v))
+type Microsoft.FSharp.Collections.Map<'Key, 'Value when 'Key : comparison> with
+    static member mapValues (f : 'Value -> 'U) x =
+        x |> Map.toSeq |> Seq.map (fun (k, v) -> (k, f v))
 
 let uniform (v : int seq) =
     let v = v |> Seq.toList
@@ -12,14 +14,14 @@ type IndEventBuilder () =
     member this.Zero () = Map.empty.Add(0, 0.)
     member this.Return (e : 'a) : Map<'a, BigRational> = Map.empty.Add(e, 1N)
     member this.Bind (m : Map<'a, BigRational>, fn : 'a -> Map<'b, BigRational>) : Map<'b, BigRational> =
-            m 
-            |> Map.toSeq |> Seq.map (fun (key, value) -> mapValues (fun x -> x * value) (fn key))
-            |> Seq.concat
-            |> Seq.groupBy(fun (key, value) -> key) 
-            |> Seq.map(fun (key, sq) -> 
-                        (key, sq |> 
-                                Seq.map (fun (key, value) -> value) |> Seq.sum)) 
-            |> Map.ofSeq
+        m 
+        |> Map.toSeq |> Seq.map (fun (key, value) -> (fn key) |> Map.mapValues (fun x -> x * value))
+        |> Seq.concat
+        |> Seq.groupBy(fun (key, value) -> key) 
+        |> Seq.map(fun (key, sq) -> 
+                    (key, sq |> 
+                            Seq.map (fun (key, value) -> value) |> Seq.sum)) 
+        |> Map.ofSeq
             
 
 let independent = IndEventBuilder()
