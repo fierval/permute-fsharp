@@ -37,12 +37,11 @@ let range = 52
 let cardProb = uniform [1..range / 4]
 
 let redDog = 
-    let removeCard (v : BigRational) (i : int) = 
+    let removeCard (v : BigRational) (i : BigInteger) = 
         let mult = BigInteger range / v.Denominator
-        let i = BigInteger i
-        BigRational.FromBigInt (v.Numerator * mult - i) / BigRational.FromBigInt  (v.Denominator * mult - BigInteger 1)
+        BigRational.FromBigInt (v.Numerator * mult - i) / BigRational.FromBigInt  (v.Denominator * mult - BigInteger.One)
 
-    let distWithRemoved card dist = dist |> Map.map (fun key v -> if key <> card then removeCard v 0 else removeCard v 1)
+    let distWithRemoved card dist = dist |> Map.map (fun key v -> if key <> card then removeCard v BigInteger.Zero else removeCard v BigInteger.One)
 
     independent {
         let! card1 = cardProb
